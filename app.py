@@ -35,6 +35,11 @@ _jobs = {}
 _jobs_lock = threading.Lock()
 
 
+@app.context_processor
+def _inject_user():
+    return {"session_user": request.headers.get("X-Remote-User", "")}
+
+
 def _load_jobs():
     JOBS_DIR.mkdir(parents=True, exist_ok=True)
     for meta_file in JOBS_DIR.glob("*/meta.json"):
@@ -62,6 +67,7 @@ def _new_job(archive_name):
     job = {
         "id": job_id,
         "archive": archive_name,
+        "user": "",
         "status": "running",
         "message": "",
         "result": "",
@@ -167,6 +173,7 @@ def create_job():
         return redirect(url_for("index"))
 
     job = _new_job(name)
+    job["user"] = request.headers.get("X-Remote-User", "")
     archive_path = _jobs_dir(job["id"]) / "archive.tar"
     file.save(archive_path)
 

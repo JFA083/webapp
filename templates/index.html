@@ -28,6 +28,7 @@
   {% endwith %}
 
   <form method="post" action="{{ url_for('create_job') }}" enctype="multipart/form-data">
+    {% if session_user %}<p>Connecté en tant que <strong>{{ session_user }}</strong></p>{% endif %}
     <label for="archive">Archive (.tar, .tar.gz, .tgz, .tar.bz2, .tar.xz)</label>
     <input type="file" id="archive" name="archive" accept=".tar,.tar.gz,.tgz,.tar.bz2,.tbz2,.tar.xz,.txz" required>
     <div><button type="submit">Envoyer et lancer le script</button></div>
@@ -37,12 +38,13 @@
   {% if jobs %}
   <table>
     <thead>
-      <tr><th>Date</th><th>Archive</th><th>Statut</th><th></th></tr>
+      <tr><th>Date</th><th>Utilisateur</th><th>Archive</th><th>Statut</th><th></th></tr>
     </thead>
     <tbody>
       {% for job in jobs %}
       <tr>
         <td>{{ job.created }}</td>
+        <td>{{ job.user }}</td>
         <td>{{ job.archive }}</td>
         <td>
           {% if job.status == 'running' %}<span class="ko">en cours…</span>

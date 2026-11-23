@@ -11,6 +11,9 @@ Environment=TARDROP_SCRIPT=/opt/tardrop/detect.sh
 Environment=TARDROP_BASE=/var/lib/tardrop
 Environment=TARDROP_TIMEOUT=900
 Environment=TARDROP_MAX_MB=512
+# Préfixe d'URL si TarDrop est exposé sous /tardrop/ dans un vhost existant.
+# Mettre « / » si la webapp a son propre vhost à la racine.
+Environment=TARDROP_PREFIX=/tardrop
 ExecStart=/opt/tardrop/venv/bin/gunicorn --workers 2 --threads 2 --bind 127.0.0.1:8000 --timeout 120 wsgi:app
 Restart=on-failure
 RestartSec=3

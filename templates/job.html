@@ -19,6 +19,7 @@
   <h1>Job {{ job.id }}</h1>
   <dl>
     <dt>Archive</dt><dd>{{ job.archive }}</dd>
+    <dt>Utilisateur</dt><dd>{{ job.user or '—' }}</dd>
     <dt>Créé le</dt><dd>{{ job.created }}</dd>
     <dt>Statut</dt>
     <dd>
