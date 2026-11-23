@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TarDrop — Traitement d'archives</title>
+  <style>
+    :root { color-scheme: light dark; }
+    body { font-family: system-ui, sans-serif; max-width: 720px; margin: 2rem auto; padding: 0 1rem; }
+    h1 { font-size: 1.4rem; }
+    form { border: 1px solid #8884; border-radius: 8px; padding: 1.25rem; margin-bottom: 2rem; }
+    label { display: block; margin-bottom: .5rem; font-weight: 600; }
+    input[type=file] { margin-bottom: 1rem; }
+    button { padding: .5rem 1.25rem; cursor: pointer; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { text-align: left; padding: .4rem .5rem; border-bottom: 1px solid #8883; }
+    .flash { background: #fff3cd; border: 1px solid #ffec99; padding: .75rem 1rem; border-radius: 6px; margin-bottom: 1rem; }
+    .ok { color: #2b8a3e; font-weight: 600; }
+    .ko { color: #c92a2a; font-weight: 600; }
+    a[rel=download] { font-weight: 600; }
+  </style>
+</head>
+<body>
+  <h1>TarDrop — Lancer un script sur une archive tar</h1>
+
+  {% with messages = get_flashed_messages() %}
+    {% for msg in messages %}<p class="flash">{{ msg }}</p>{% endfor %}
+  {% endwith %}
+
+  <form method="post" action="{{ url_for('create_job') }}" enctype="multipart/form-data">
+    <label for="archive">Archive (.tar, .tar.gz, .tgz, .tar.bz2, .tar.xz)</label>
+    <input type="file" id="archive" name="archive" accept=".tar,.tar.gz,.tgz,.tar.bz2,.tbz2,.tar.xz,.txz" required>
+    <div><button type="submit">Envoyer et lancer le script</button></div>
+  </form>
+
+  <h2>Jobs récents</h2>
+  {% if jobs %}
+  <table>
+    <thead>
+      <tr><th>Date</th><th>Archive</th><th>Statut</th><th></th></tr>
+    </thead>
+    <tbody>
+      {% for job in jobs %}
+      <tr>
+        <td>{{ job.created }}</td>
+        <td>{{ job.archive }}</td>
+        <td>
+          {% if job.status == 'running' %}<span class="ko">en cours…</span>
+          {% elif job.status == 'success' %}<span class="ok">terminé</span>
+          {% else %}<span class="ko">échec</span>{% endif %}
+        </td>
+        <td><a href="{{ url_for('job_page', job_id=job.id) }}">détails</a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p>Aucun job pour le moment.</p>
+  {% endif %}
+</body>
+</html>

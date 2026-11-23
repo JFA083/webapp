@@ -1,0 +1,21 @@
+[Unit]
+Description=TarDrop webapp (Flask via gunicorn)
+After=network.target
+
+[Service]
+Type=exec
+User=tardrop
+Group=tardrop
+WorkingDirectory=/opt/tardrop/app
+Environment=TARDROP_SCRIPT=/opt/tardrop/detect.sh
+Environment=TARDROP_BASE=/var/lib/tardrop
+Environment=TARDROP_TIMEOUT=900
+Environment=TARDROP_MAX_MB=512
+ExecStart=/opt/tardrop/venv/bin/gunicorn --workers 2 --threads 2 --bind 127.0.0.1:8000 --timeout 120 wsgi:app
+Restart=on-failure
+RestartSec=3
+NoNewPrivileges=yes
+PrivateTmp=yes
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  {% if job.status == 'running' %}<meta http-equiv="refresh" content="2">{% endif %}
+  <title>TarDrop — Job {{ job.id }}</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 720px; margin: 2rem auto; padding: 0 1rem; }
+    dl { display: grid; grid-template-columns: 10rem 1fr; row-gap: .4rem; }
+    dt { font-weight: 600; }
+    pre { background: #8886181a; padding: .75rem 1rem; border-radius: 6px; overflow-x: auto; }
+    .actions a { display: inline-block; margin-right: .75rem; font-weight: 600; }
+    .ok { color: #2b8a3e; font-weight: 700; }
+    .ko { color: #c92a2a; font-weight: 700; }
+  </style>
+</head>
+<body>
+  <h1>Job {{ job.id }}</h1>
+  <dl>
+    <dt>Archive</dt><dd>{{ job.archive }}</dd>
+    <dt>Créé le</dt><dd>{{ job.created }}</dd>
+    <dt>Statut</dt>
+    <dd>
+      {% if job.status == 'running' %}<span class="ko">en cours…</span>
+      {% elif job.status == 'success' %}<span class="ok">terminé</span>
+      {% else %}<span class="ko">échec</span>{% endif %}
+      {% if job.message %} — {{ job.message }}{% endif %}
+    </dd>
+  </dl>
+
+  <div class="actions">
+    {% if job.status == 'success' and job.result %}
+      <a rel="download" href="{{ url_for('job_download', job_id=job.id) }}">⬇ Télécharger {{ job.result }}</a>
+    {% endif %}
+    <a href="{{ url_for('job_log', job_id=job.id) }}">Journal du script</a>
+    <a href="{{ url_for('index') }}">Retour</a>
+  </div>
+</body>
+</html>
